@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Turtle Animation</title>
+  <!-- Skulpt Engine for running Python Turtle in Browser -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt.min.js" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/skulpt@1.2.0/dist/skulpt-stdlib.js" type="text/javascript"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    #mycanvas {
+      background-color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="mycanvas"></div>
+
+  <script type="text/javascript">
+    // Direct Python Code
+    const pythonCode = `
+import colorsys
+import turtle
+
+screen = turtle.Screen()
+screen.bgcolor("black")
+
+t = turtle.Turtle()
+t.speed(0)
+t.width(1)
+
+n, h = 36, 0
+
+for i in range(200):
+    c = colorsys.hsv_to_rgb(h, 1, 1)
+    t.color(c)
+    h += 1 / n
+    t.forward(i)
+    t.left(135)
+    t.forward(i)
+    t.left(30)
+    t.circle(i, 45)
+
+turtle.done()
+`;
+
+    function outf(text) { console.log(text); }
+
+    function builtinRead(x) {
+      if (Sk.builtinFiles === undefined || Sk.builtinFiles["files"][x] === undefined)
+        throw "File not found: '" + x + "'";
+      return Sk.builtinFiles["files"][x];
+    }
+
+    function runit() {
+      Sk.element = "mycanvas";
+      Sk.configure({ output: outf, read: builtinRead });
+      (Sk.TurtleGraphics || (Sk.TurtleGraphics = {})).target = 'mycanvas';
+
+      Sk.misceval.asyncToPromise(function() {
+        return Sk.importMainWithBody("<stdin>", false, pythonCode, true);
+      });
+    }
+
+    window.onload = runit;
+  </script>
+</body>
+</html>
